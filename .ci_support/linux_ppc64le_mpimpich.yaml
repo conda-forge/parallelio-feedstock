@@ -1,0 +1,31 @@
+c_compiler:
+- gcc
+c_compiler_version:
+- '10'
+cdt_name:
+- cos7
+channel_sources:
+- conda-forge
+channel_targets:
+- conda-forge main
+docker_image:
+- quay.io/condaforge/linux-anvil-ppc64le
+fortran_compiler:
+- gfortran
+fortran_compiler_version:
+- '10'
+libnetcdf:
+- 4.8.1
+mpi:
+- mpich
+mpich:
+- '4'
+netcdf_fortran:
+- '4.6'
+openmpi:
+- '4'
+target_platform:
+- linux-ppc64le
+zip_keys:
+- - c_compiler_version
+  - fortran_compiler_version
