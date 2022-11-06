@@ -1,15 +1,20 @@
 {% set version = "2.5.9" %}
 {% set ver = version.replace(".", "_") %}
-{% set build = 0 %}
+{% set build = 1 %}
 
-# recipe-lint fails if mpi is undefined
+# ensure mpi is defined (needed for conda-smithy recipe-lint)
 {% set mpi = mpi or 'mpich' %}
+
 {% if mpi == "mpich" %}
   # prioritize mpich via build number
   {% set build = build + 100 %}
 {% endif %}
 
+{% if mpi != 'nompi' %}
 {% set mpi_prefix = "mpi_" + mpi %}
+{% else %}
+{% set mpi_prefix = "nompi" %}
+{% endif %}
 
 package:
   name: parallelio
@@ -38,7 +43,7 @@ requirements:
     - cmake
     - make
   host:
-    - {{ mpi }}
+    - {{ mpi }}  # [mpi != 'nompi']
     # these need to be listed twice so conda-smithy build picks up the pins
     - libnetcdf
     - libnetcdf * {{ mpi_prefix }}_*

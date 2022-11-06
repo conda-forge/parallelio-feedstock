@@ -6,6 +6,12 @@ rm -rfv $PREFIX/lib/objects*
 export NETCDF_C_PATH=$(dirname $(dirname $(which nc-config)))
 export NETCDF_FORTRAN_PATH=$(dirname $(dirname $(which nf-config)))
 
+if [[ -z "$mpi" || "$mpi" == "nompi" ]]; then
+  mpiserial_flag="-DPIO_USE_MPISERIAL:BOOL=ON"
+else
+  mpiserial_flag="-DPIO_USE_MPISERIAL:BOOL=OFF"
+fi
+
 mkdir build
 cd build
 FC=mpifort CC=mpicc cmake \
@@ -20,6 +26,7 @@ FC=mpifort CC=mpicc cmake \
     -DNetCDF_C_PATH=$NETCDF_C_PATH \
     -DNetCDF_Fortran_PATH=$NETCDF_FORTRAN_PATH \
     -DWITH_PNETCDF:BOOL=OFF \
+    ${mpiserial_flag} \
     ..
 
 cmake --build .
