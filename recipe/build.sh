@@ -22,7 +22,7 @@ FC=mpifort CC=mpicc cmake \
     -DWITH_PNETCDF:BOOL=OFF \
     ..
 
-cmake ${CMAKE_ARGS} --build .
+cmake --build .
 
 # make tests
 # ctest
