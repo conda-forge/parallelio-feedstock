@@ -18,6 +18,8 @@ package:
 source:
   url: https://github.com/NCAR/ParallelIO/archive/refs/tags/pio{{ ver }}.tar.gz
   sha256: e5dbc153d8637111de3a51a9655660bf15367d55842de78240dcfc024380553d
+  patches:
+    - mpi-cmakelists.patch
 
 build:
   number: {{ build }}
@@ -37,6 +39,7 @@ requirements:
     - {{ compiler('fortran') }}
     - cmake
     - make
+    - {{ mpi }}  # [mpi == 'openmpi' and build_platform != target_platform]
   host:
     - {{ mpi }}
     # these need to be listed twice so conda-smithy build picks up the pins
