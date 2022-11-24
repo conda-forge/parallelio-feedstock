@@ -1,14 +1,18 @@
 #!/bin/bash
 
+set -xe
+
 # Remove some files that may cause static linking?
 rm -rfv $PREFIX/lib/objects*
 
-export NETCDF_C_PATH=$(dirname $(dirname $(which nc-config)))
-export NETCDF_FORTRAN_PATH=$(dirname $(dirname $(which nf-config)))
-
 mkdir build
 cd build
-FC=mpifort CC=mpicc cmake \
+
+# for cross compiling using openmpi
+export OPAL_PREFIX=$PREFIX
+
+cmake \
+    ${CMAKE_ARGS} \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=$PREFIX \
     -DBUILD_SHARED_LIBS:BOOL=ON \
@@ -17,10 +21,8 @@ FC=mpifort CC=mpicc cmake \
     -DPIO_ENABLE_TESTS:BOOL=OFF \
     -DPIO_ENABLE_EXAMPLES:BOOL=OFF \
     -DPIO_ENABLE_TIMING:BOOL=OFF \
-    -DNetCDF_C_PATH=$NETCDF_C_PATH \
-    -DNetCDF_Fortran_PATH=$NETCDF_FORTRAN_PATH \
     -DWITH_PNETCDF:BOOL=OFF \
-    ..
+    ${SRC_DIR}
 
 cmake --build .
 
