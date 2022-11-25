@@ -1,6 +1,6 @@
 diff -ruN -x __pycache__ -x obj -x '*~' -x tags -x TAGS ParallelIO-pio2_5_9.orig/CMakeLists.txt ParallelIO-pio2_5_9/CMakeLists.txt
 --- ParallelIO-pio2_5_9.orig/CMakeLists.txt	2022-09-19 20:47:16.000000000 +0200
-+++ ParallelIO-pio2_5_9/CMakeLists.txt	2022-11-25 15:40:48.237696077 +0100
++++ ParallelIO-pio2_5_9/CMakeLists.txt	2022-11-25 15:59:46.534256949 +0100
 @@ -4,7 +4,7 @@
  
  # Jim Edwards
@@ -10,12 +10,8 @@ diff -ruN -x __pycache__ -x obj -x '*~' -x tags -x TAGS ParallelIO-pio2_5_9.orig
  project (PIO C)
  
  # The project version number.
-@@ -143,20 +143,15 @@
-     message (STATUS "Importing CMake_Fortran_utils")
-     execute_process(
-       COMMAND git clone https://github.com/CESM-Development/CMake_Fortran_utils
--      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+@@ -146,17 +146,12 @@
+       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
        OUTPUT_QUIET
        ERROR_QUIET)
 -    find_path (USER_CMAKE_MODULE_PATH
