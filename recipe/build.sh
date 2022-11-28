@@ -30,3 +30,5 @@ cmake --build .
 # ctest
 
 cmake --install .
+
+(exit 1)
