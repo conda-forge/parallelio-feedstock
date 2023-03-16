@@ -1,11 +1,11 @@
-About parallelio
-================
+About parallelio-feedstock
+==========================
+
+Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/parallelio-feedstock/blob/main/LICENSE.txt)
 
 Home: https://github.com/NCAR/ParallelIO
 
 Package license: Apache-2.0
-
-Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/parallelio-feedstock/blob/main/LICENSE.txt)
 
 Summary: A high-level Parallel I/O Library for structured grid applications
 
