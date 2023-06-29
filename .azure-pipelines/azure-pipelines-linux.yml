@@ -8,6 +8,10 @@ jobs:
     vmImage: ubuntu-latest
   strategy:
     matrix:
+      linux_64_mpimpi_serial:
+        CONFIG: linux_64_mpimpi_serial
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
       linux_64_mpimpich:
         CONFIG: linux_64_mpimpich
         UPLOAD_PACKAGES: 'True'
@@ -16,12 +20,20 @@ jobs:
         CONFIG: linux_64_mpiopenmpi
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
+      linux_aarch64_mpimpi_serial:
+        CONFIG: linux_aarch64_mpimpi_serial
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
       linux_aarch64_mpimpich:
         CONFIG: linux_aarch64_mpimpich
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
       linux_aarch64_mpiopenmpi:
         CONFIG: linux_aarch64_mpiopenmpi
+        UPLOAD_PACKAGES: 'True'
+        DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
+      linux_ppc64le_mpimpi_serial:
+        CONFIG: linux_ppc64le_mpimpi_serial
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
       linux_ppc64le_mpimpich:
