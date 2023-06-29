@@ -8,6 +8,12 @@ rm -rfv $PREFIX/lib/objects*
 mkdir build
 cd build
 
+if [[ ! -z "$mpi" && "$mpi" == "mpi_serial" ]]; then
+  export USE_MPI_SERIAL="ON"
+else
+  export USE_MPI_SERIAL="OFF"
+fi
+
 # for cross compiling using openmpi
 export OPAL_PREFIX=$PREFIX
 
@@ -22,6 +28,7 @@ cmake \
     -DPIO_ENABLE_EXAMPLES:BOOL=OFF \
     -DPIO_ENABLE_TIMING:BOOL=OFF \
     -DWITH_PNETCDF:BOOL=OFF \
+    -DPIO_USE_MPISERIAL:BOOL=${USE_MPI_SERIAL} \
     ${SRC_DIR}
 
 cmake --build .
