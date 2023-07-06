@@ -52,6 +52,8 @@ requirements:
     # these need to be listed twice so conda-smithy build picks up the pins
     - libnetcdf
     - libnetcdf * {{ mpi_dep_prefix }}_*
+    - libpnetcdf  # [mpi != 'nompi']
+    - libpnetcdf * {{ mpi_dep_prefix }}_*  # [mpi != 'nompi']
     - netcdf-fortran
     - netcdf-fortran * {{ mpi_dep_prefix }}_*
 
