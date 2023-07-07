@@ -8,11 +8,17 @@ jobs:
     vmImage: macOS-11
   strategy:
     matrix:
+      osx_64_mpimpi_serial:
+        CONFIG: osx_64_mpimpi_serial
+        UPLOAD_PACKAGES: 'True'
       osx_64_mpimpich:
         CONFIG: osx_64_mpimpich
         UPLOAD_PACKAGES: 'True'
       osx_64_mpiopenmpi:
         CONFIG: osx_64_mpiopenmpi
+        UPLOAD_PACKAGES: 'True'
+      osx_arm64_mpimpi_serial:
+        CONFIG: osx_arm64_mpimpi_serial
         UPLOAD_PACKAGES: 'True'
       osx_arm64_mpimpich:
         CONFIG: osx_arm64_mpimpich
