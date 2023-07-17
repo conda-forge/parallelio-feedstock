@@ -9,9 +9,11 @@ mkdir build
 cd build
 
 if [[ ! -z "$mpi" && "$mpi" == "mpi_serial" ]]; then
-  export USE_MPI_SERIAL="ON"
+    export USE_MPI_SERIAL="ON"
+    export WITH_PNETCDF="OFF"
 else
-  export USE_MPI_SERIAL="OFF"
+    export USE_MPI_SERIAL="OFF"
+    export WITH_PNETCDF="ON"
 fi
 
 # for cross compiling using openmpi
@@ -27,7 +29,7 @@ cmake \
     -DPIO_ENABLE_TESTS:BOOL=OFF \
     -DPIO_ENABLE_EXAMPLES:BOOL=OFF \
     -DPIO_ENABLE_TIMING:BOOL=OFF \
-    -DWITH_PNETCDF:BOOL=OFF \
+    -DWITH_PNETCDF:BOOL=${WITH_PNETCDF} \
     -DPIO_USE_MPISERIAL:BOOL=${USE_MPI_SERIAL} \
     ${SRC_DIR}
 
