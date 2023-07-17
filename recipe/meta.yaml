@@ -15,7 +15,7 @@
   # we want to use the "nompi" versions of dependencies
   {% set mpi_dep_prefix = "nompi" %}
 {% else %}
-  {% set mpi_dep_prefix = "mpi_" + mpi %}
+  {% set mpi_dep_prefix = mpi_prefix %}
 {% endif %}
 
 package:
@@ -52,8 +52,8 @@ requirements:
     # these need to be listed twice so conda-smithy build picks up the pins
     - libnetcdf
     - libnetcdf * {{ mpi_dep_prefix }}_*
-    - libpnetcdf  # [mpi != 'nompi']
-    - libpnetcdf * {{ mpi_dep_prefix }}_*  # [mpi != 'nompi']
+    - libpnetcdf  # [mpi != 'mpi_serial']
+    - libpnetcdf * {{ mpi_dep_prefix }}_*  # [mpi != 'mpi_serial']
     - netcdf-fortran
     - netcdf-fortran * {{ mpi_dep_prefix }}_*
 
