@@ -1,6 +1,6 @@
 {% set version = "2.6.2" %}
 {% set ver = version.replace(".", "_") %}
-{% set build = 1 %}
+{% set build = 2 %}
 
 # recipe-lint fails if mpi is undefined
 {% set mpi = mpi or 'mpich' %}
@@ -44,6 +44,7 @@ requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('fortran') }}
+    - {{ stdlib('c') }}
     - cmake
     - make
     - {{ mpi }}  # [mpi == 'openmpi' and build_platform != target_platform]
