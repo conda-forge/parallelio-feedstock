@@ -33,7 +33,7 @@ mpich:
 netcdf_fortran:
 - '4.6'
 openmpi:
-- '4'
+- '5'
 target_platform:
 - linux-aarch64
 zip_keys:
