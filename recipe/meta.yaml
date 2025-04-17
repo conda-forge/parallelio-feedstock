@@ -1,4 +1,4 @@
-{% set version = "2_6_5" %}
+{% set version = "2_6_6" %}
 {% set ver = version.replace(".", "_") %}
 {% set build = 0 %}
 
@@ -24,7 +24,7 @@ package:
 
 source:
   url: https://github.com/NCAR/ParallelIO/archive/refs/tags/pio{{ ver }}.tar.gz
-  sha256: 6ae51aa3f76e597a3a840a292ae14eca21359b1a4ea75e476a93aa2088c0677a
+  sha256: e32e018a521d38c9424940c7cfa7e9b1931b605f3511ee7ab3a718b69faeeb04
   patches:
     - mpi-cmakelists.patch
 
