@@ -4,4 +4,4 @@ mpi:
   - mpi_serial
 
 libpnetcdf:
-  - 1.13.0
+  - 1.14.0
