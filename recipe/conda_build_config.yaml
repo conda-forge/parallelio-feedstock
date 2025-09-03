@@ -2,6 +2,3 @@ mpi:
   - openmpi
   - mpich
   - mpi_serial
-
-libpnetcdf:
-  - 1.14.0
