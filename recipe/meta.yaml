@@ -1,6 +1,6 @@
-{% set version = "2_6_6" %}
+{% set version = "2_6_7" %}
 {% set ver = version.replace(".", "_") %}
-{% set build = 3 %}
+{% set build = 0 %}
 
 # recipe-lint fails if mpi is undefined
 {% set mpi = mpi or 'mpich' %}
@@ -24,7 +24,7 @@ package:
 
 source:
   url: https://github.com/NCAR/ParallelIO/archive/refs/tags/pio{{ ver }}.tar.gz
-  sha256: e32e018a521d38c9424940c7cfa7e9b1931b605f3511ee7ab3a718b69faeeb04
+  sha256: b346592cb24bf5f98583574c0679020ef3026005cd8f3efa87545d0982581037
   patches:
     - mpi-cmakelists.patch
 
