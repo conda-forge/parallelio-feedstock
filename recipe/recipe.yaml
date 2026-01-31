@@ -54,7 +54,8 @@ requirements:
     - netcdf-fortran
     - netcdf-fortran * ${{ mpi_dep_prefix }}_*
   run_exports:
-    - ${{ pin_subpackage("parallelio", upper_bound="x.x.x") }} ${{ mpi_prefix }}_*
+    - ${{ pin_subpackage("parallelio", upper_bound="x.x.x") }}
+    - parallelio *  ${{ mpi_prefix }}_*
   ignore_run_exports:
     from_package:
       - netcdf-fortran
