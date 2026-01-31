@@ -31,10 +31,6 @@ build:
   # `PKG_NAME * mpi_mpich_*` for mpich
   # `PKG_NAME * mpi_*` for any mpi
   string: ${{ mpi_prefix }}_h${{ hash }}_${{ build_number }}
-  run_exports:
-    - ${{ pin_subpackage("parallelio", upper_bound="x.x.x") }} ${{ mpi_prefix }}_*
-  ignore_run_exports_from:
-    - netcdf-fortran
 
 requirements:
   build:
@@ -57,7 +53,11 @@ requirements:
         - libpnetcdf * ${{ mpi_dep_prefix }}_*
     - netcdf-fortran
     - netcdf-fortran * ${{ mpi_dep_prefix }}_*
-
+  run_exports:
+    - ${{ pin_subpackage("parallelio", upper_bound="x.x.x") }} ${{ mpi_prefix }}_*
+  ignore_run_exports:
+    from_package:
+      - netcdf-fortran
 tests:
   - script:
       - test -f ${PREFIX}/lib/libpioc${SHLIB_EXT}
