@@ -32,7 +32,7 @@ build:
   # `PKG_NAME * mpi_*` for any mpi
   string: ${{ mpi_prefix }}_h${{ hash }}_${{ build_number }}
   run_exports:
-    - ${{ pin_subpackage("parallelio", max_pin="x.x.x") }} ${{ mpi_prefix }}_*
+    - ${{ pin_subpackage("parallelio", upper_bound="x.x.x") }} ${{ mpi_prefix }}_*
   ignore_run_exports_from:
     - netcdf-fortran
 
