@@ -1,16 +1,7 @@
-diff -ruN -x __pycache__ -x obj -x '*~' -x tags -x TAGS ParallelIO-pio2_5_10.orig/CMakeLists.txt ParallelIO-pio2_5_10/CMakeLists.txt
---- ParallelIO-pio2_5_10.orig/CMakeLists.txt	2022-12-10 15:35:33.000000000 +0100
-+++ ParallelIO-pio2_5_10/CMakeLists.txt	2022-12-12 16:31:07.957314633 +0100
-@@ -4,7 +4,7 @@
- 
- # Jim Edwards
- 
--cmake_minimum_required (VERSION 3.5.2)
-+cmake_minimum_required (VERSION 3.10)
- project (PIO C)
- 
- # The project version number.
-@@ -146,17 +146,12 @@
+diff -ruN ParallelIO-pio2_6_9/CMakeLists.txt ParallelIO-pio2_6_9-patch/CMakeLists.txt
+--- ParallelIO-pio2_6_9/CMakeLists.txt	2026-01-30 21:29:15.000000000 +0100
++++ ParallelIO-pio2_6_9-patch/CMakeLists.txt	2026-01-31 18:06:17.589338299 +0100
+@@ -173,17 +173,12 @@
        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
        OUTPUT_QUIET
        ERROR_QUIET)
@@ -33,41 +24,41 @@ diff -ruN -x __pycache__ -x obj -x '*~' -x tags -x TAGS ParallelIO-pio2_5_10.ori
    list (APPEND CMAKE_MODULE_PATH ${USER_CMAKE_MODULE_PATH})
  endif ()
  
-diff -ruN -x __pycache__ -x obj -x '*~' -x tags -x TAGS ParallelIO-pio2_5_10.orig/src/clib/CMakeLists.txt ParallelIO-pio2_5_10/src/clib/CMakeLists.txt
---- ParallelIO-pio2_5_10.orig/src/clib/CMakeLists.txt	2022-12-10 15:35:33.000000000 +0100
-+++ ParallelIO-pio2_5_10/src/clib/CMakeLists.txt	2022-12-12 16:28:44.197280881 +0100
-@@ -171,6 +171,9 @@
-     set (WITH_PNETCDF FALSE)
-     set (MPI_C_INCLUDE_PATH ${MPISERIAL_C_INCLUDE_DIRS})
-   endif ()
+diff -ruN ParallelIO-pio2_6_9/src/clib/CMakeLists.txt ParallelIO-pio2_6_9-patch/src/clib/CMakeLists.txt
+--- ParallelIO-pio2_6_9/src/clib/CMakeLists.txt	2026-01-30 21:29:15.000000000 +0100
++++ ParallelIO-pio2_6_9-patch/src/clib/CMakeLists.txt	2026-01-31 18:07:10.798947223 +0100
+@@ -185,6 +185,9 @@
+     set(WITH_PNETCDF FALSE)
+     set(MPI_C_INCLUDE_PATH ${MPISERIAL_C_INCLUDE_DIRS})
+   endif()
 +else ()
 +  target_link_libraries (pioc
 +    PUBLIC MPI::MPI_C)
- endif ()
+ endif()
  
- include(CheckTypeSize)
-diff -ruN -x __pycache__ -x obj -x '*~' -x tags -x TAGS ParallelIO-pio2_5_10.orig/src/flib/CMakeLists.txt ParallelIO-pio2_5_10/src/flib/CMakeLists.txt
---- ParallelIO-pio2_5_10.orig/src/flib/CMakeLists.txt	2022-12-10 15:35:33.000000000 +0100
-+++ ParallelIO-pio2_5_10/src/flib/CMakeLists.txt	2022-12-12 16:28:44.198280888 +0100
-@@ -158,6 +158,9 @@
-     set (WITH_PNETCDF FALSE)
-     set (MPI_Fortran_INCLUDE_PATH ${MPISERIAL_Fortran_INCLUDE_DIRS})
-   endif ()
+ 
+diff -ruN ParallelIO-pio2_6_9/src/flib/CMakeLists.txt ParallelIO-pio2_6_9-patch/src/flib/CMakeLists.txt
+--- ParallelIO-pio2_6_9/src/flib/CMakeLists.txt	2026-01-30 21:29:15.000000000 +0100
++++ ParallelIO-pio2_6_9-patch/src/flib/CMakeLists.txt	2026-01-31 18:08:06.581499819 +0100
+@@ -186,6 +186,9 @@
+     set(WITH_PNETCDF FALSE)
+     set(MPI_Fortran_INCLUDE_PATH ${MPISERIAL_Fortran_INCLUDE_DIRS})
+   endif()
 +else ()
 +    target_link_libraries (piof
 +      PUBLIC MPI::MPI_Fortran)
- endif ()
+ endif()
  
  # Check MPI I/O capabilities
-diff -ruN -x __pycache__ -x obj -x '*~' -x tags -x TAGS ParallelIO-pio2_5_10.orig/src/gptl/CMakeLists.txt ParallelIO-pio2_5_10/src/gptl/CMakeLists.txt
---- ParallelIO-pio2_5_10.orig/src/gptl/CMakeLists.txt	2022-12-10 15:35:33.000000000 +0100
-+++ ParallelIO-pio2_5_10/src/gptl/CMakeLists.txt	2022-12-12 16:28:44.200280903 +0100
-@@ -112,6 +112,8 @@
-   if (MPI_C_FOUND AND MPI_Fortran_FOUND)
-     target_compile_definitions (gptl
+diff -ruN ParallelIO-pio2_6_9/src/gptl/CMakeLists.txt ParallelIO-pio2_6_9-patch/src/gptl/CMakeLists.txt
+--- ParallelIO-pio2_6_9/src/gptl/CMakeLists.txt	2026-01-30 21:29:15.000000000 +0100
++++ ParallelIO-pio2_6_9-patch/src/gptl/CMakeLists.txt	2026-01-31 18:09:24.703926961 +0100
+@@ -137,6 +137,8 @@
+   if(MPI_C_FOUND AND MPI_Fortran_FOUND)
+     target_compile_definitions(gptl
        PUBLIC HAVE_MPI)
 +    target_link_libraries (gptl
 +      PUBLIC MPI::MPI_C MPI::MPI_Fortran)
-   endif ()
- endif ()
+   endif()
+ endif()
  
