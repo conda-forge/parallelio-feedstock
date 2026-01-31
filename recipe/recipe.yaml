@@ -39,6 +39,7 @@ requirements:
     - ${{ stdlib("c") }}
     - cmake
     - make
+    - pkg-config
     - if: mpi == "openmpi" and build_platform != target_platform
       then:
         - ${{ mpi }}
