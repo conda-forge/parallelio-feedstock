@@ -1,0 +1,164 @@
+diff -ruN ParallelIO-pio2_6_9-patch/cmake/FindMPISERIAL.cmake ParallelIO-pio2_6_9-patch2/cmake/FindMPISERIAL.cmake
+--- ParallelIO-pio2_6_9-patch/cmake/FindMPISERIAL.cmake	2026-02-02 11:42:51.916493663 +0100
++++ ParallelIO-pio2_6_9-patch2/cmake/FindMPISERIAL.cmake	2026-02-02 12:12:41.141712092 +0100
+@@ -42,3 +42,34 @@
+     endif ()
+ 
+ endforeach ()
++
++# Ensure non-component variables are populated when only C component is found.
++if (MPISERIAL_C_FOUND)
++    if (NOT MPISERIAL_C_INCLUDE_DIRS AND MPISERIAL_INCLUDE_DIR)
++        set(MPISERIAL_C_INCLUDE_DIRS ${MPISERIAL_INCLUDE_DIR})
++    endif ()
++    if (NOT MPISERIAL_C_LIBRARIES AND MPISERIAL_C_LIBRARY)
++        set(MPISERIAL_C_LIBRARIES ${MPISERIAL_C_LIBRARY})
++    endif ()
++    if (NOT MPISERIAL_INCLUDE_DIRS)
++        if (MPISERIAL_C_INCLUDE_DIRS)
++            set(MPISERIAL_INCLUDE_DIRS ${MPISERIAL_C_INCLUDE_DIRS})
++        elseif (MPISERIAL_INCLUDE_DIR)
++            set(MPISERIAL_INCLUDE_DIRS ${MPISERIAL_INCLUDE_DIR})
++        endif ()
++    endif ()
++    if (NOT MPISERIAL_LIBRARIES)
++        if (MPISERIAL_C_LIBRARIES)
++            set(MPISERIAL_LIBRARIES ${MPISERIAL_C_LIBRARIES})
++        elseif (MPISERIAL_LIBRARY)
++            set(MPISERIAL_LIBRARIES ${MPISERIAL_LIBRARY})
++        endif ()
++    endif ()
++    set(MPISERIAL_FOUND TRUE)
++elseif (MPISERIAL_LIBRARY AND NOT MPISERIAL_LIBRARIES)
++    set(MPISERIAL_LIBRARIES ${MPISERIAL_LIBRARY})
++    if (NOT MPISERIAL_INCLUDE_DIRS AND MPISERIAL_INCLUDE_DIR)
++        set(MPISERIAL_INCLUDE_DIRS ${MPISERIAL_INCLUDE_DIR})
++    endif ()
++    set(MPISERIAL_FOUND TRUE)
++endif ()
+diff -ruN ParallelIO-pio2_6_9-patch/CMakeLists.txt ParallelIO-pio2_6_9-patch2/CMakeLists.txt
+--- ParallelIO-pio2_6_9-patch/CMakeLists.txt	2026-02-02 11:42:51.916502056 +0100
++++ ParallelIO-pio2_6_9-patch2/CMakeLists.txt	2026-02-02 11:56:57.744246315 +0100
+@@ -187,7 +187,15 @@
+ 
+ #===== MPI =====
+ if(PIO_USE_MPISERIAL)
+-  find_package(MPISERIAL COMPONENTS C REQUIRED)
++  find_package(MPISERIAL COMPONENTS C QUIET)
++  if(NOT MPISERIAL_C_FOUND)
++    find_package(MPISERIAL REQUIRED)
++    if(MPISERIAL_FOUND)
++      set(MPISERIAL_C_FOUND TRUE)
++      set(MPISERIAL_C_INCLUDE_DIRS ${MPISERIAL_INCLUDE_DIRS})
++      set(MPISERIAL_C_LIBRARIES ${MPISERIAL_LIBRARIES})
++    endif()
++  endif()
+   if(MPISERIAL_C_FOUND)
+     set(CMAKE_REQUIRED_INCLUDES ${MPISERIAL_C_INCLUDE_DIRS})
+   endif()
+diff -ruN ParallelIO-pio2_6_9-patch/src/clib/CMakeLists.txt ParallelIO-pio2_6_9-patch2/src/clib/CMakeLists.txt
+--- ParallelIO-pio2_6_9-patch/src/clib/CMakeLists.txt	2026-02-02 11:42:51.915365165 +0100
++++ ParallelIO-pio2_6_9-patch2/src/clib/CMakeLists.txt	2026-02-02 12:12:46.960366760 +0100
+@@ -96,14 +96,45 @@
+ #  DEFINE THE DEPENDENCIES
+ #==============================================================================
+ # MPI test done at top level
+-if (MPISERIAL_C_FOUND)
+-    target_compile_definitions (pioc
+-      PRIVATE MPI_SERIAL)
+-    target_include_directories (pioc
+-      PUBLIC ${MPISERIAL_C_INCLUDE_DIRS})
+-    target_link_libraries (pioc
+-      PUBLIC ${MPISERIAL_C_LIBRARIES})
+-    set (WITH_PNETCDF FALSE)
++if (PIO_USE_MPISERIAL)
++  set(_mpiserial_include_dirs "")
++  set(_mpiserial_libraries "")
++  if (MPISERIAL_C_FOUND)
++    set(_mpiserial_include_dirs ${MPISERIAL_C_INCLUDE_DIRS})
++    set(_mpiserial_libraries ${MPISERIAL_C_LIBRARIES})
++  elseif (MPISERIAL_FOUND)
++    set(_mpiserial_include_dirs ${MPISERIAL_INCLUDE_DIRS})
++    set(_mpiserial_libraries ${MPISERIAL_LIBRARIES})
++  endif ()
++
++  if (NOT _mpiserial_libraries)
++    if (MPISERIAL_C_LIBRARY)
++      set(_mpiserial_libraries ${MPISERIAL_C_LIBRARY})
++    elseif (MPISERIAL_LIBRARY)
++      set(_mpiserial_libraries ${MPISERIAL_LIBRARY})
++    endif ()
++  endif ()
++  if (NOT _mpiserial_include_dirs)
++    if (MPISERIAL_C_INCLUDE_DIRS)
++      set(_mpiserial_include_dirs ${MPISERIAL_C_INCLUDE_DIRS})
++    elseif (MPISERIAL_INCLUDE_DIRS)
++      set(_mpiserial_include_dirs ${MPISERIAL_INCLUDE_DIRS})
++    elseif (MPISERIAL_INCLUDE_DIR)
++      set(_mpiserial_include_dirs ${MPISERIAL_INCLUDE_DIR})
++    endif ()
++  endif ()
++
++  if (_mpiserial_libraries)
++      target_compile_definitions (pioc
++        PRIVATE MPI_SERIAL)
++      if (_mpiserial_include_dirs)
++        target_include_directories (pioc
++          PUBLIC ${_mpiserial_include_dirs})
++      endif ()
++      target_link_libraries (pioc
++        PUBLIC ${_mpiserial_libraries})
++      set (WITH_PNETCDF FALSE)
++  endif ()
+ endif ()
+ 
+ 
+@@ -175,15 +206,44 @@
+ 
+ #===== MPI =====
+ if(PIO_USE_MPISERIAL)
++  set(_mpiserial_include_dirs "")
++  set(_mpiserial_libraries "")
+   if(MPISERIAL_C_FOUND)
++    set(_mpiserial_include_dirs ${MPISERIAL_C_INCLUDE_DIRS})
++    set(_mpiserial_libraries ${MPISERIAL_C_LIBRARIES})
++  elseif(MPISERIAL_FOUND)
++    set(_mpiserial_include_dirs ${MPISERIAL_INCLUDE_DIRS})
++    set(_mpiserial_libraries ${MPISERIAL_LIBRARIES})
++  endif()
++
++  if (NOT _mpiserial_libraries)
++    if (MPISERIAL_C_LIBRARY)
++      set(_mpiserial_libraries ${MPISERIAL_C_LIBRARY})
++    elseif (MPISERIAL_LIBRARY)
++      set(_mpiserial_libraries ${MPISERIAL_LIBRARY})
++    endif ()
++  endif ()
++  if (NOT _mpiserial_include_dirs)
++    if (MPISERIAL_C_INCLUDE_DIRS)
++      set(_mpiserial_include_dirs ${MPISERIAL_C_INCLUDE_DIRS})
++    elseif (MPISERIAL_INCLUDE_DIRS)
++      set(_mpiserial_include_dirs ${MPISERIAL_INCLUDE_DIRS})
++    elseif (MPISERIAL_INCLUDE_DIR)
++      set(_mpiserial_include_dirs ${MPISERIAL_INCLUDE_DIR})
++    endif ()
++  endif ()
++
++  if(_mpiserial_libraries)
+     target_compile_definitions(pioc
+       PRIVATE _MPISERIAL)
+-    target_include_directories(pioc
+-      PUBLIC ${MPISERIAL_C_INCLUDE_DIRS})
++    if (_mpiserial_include_dirs)
++      target_include_directories(pioc
++        PUBLIC ${_mpiserial_include_dirs})
++      set(MPI_C_INCLUDE_PATH ${_mpiserial_include_dirs})
++    endif ()
+     target_link_libraries(pioc
+-      PUBLIC ${MPISERIAL_C_LIBRARIES})
++      PUBLIC ${_mpiserial_libraries})
+     set(WITH_PNETCDF FALSE)
+-    set(MPI_C_INCLUDE_PATH ${MPISERIAL_C_INCLUDE_DIRS})
+   endif()
+ endif()
+ 
