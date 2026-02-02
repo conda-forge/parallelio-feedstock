@@ -1,0 +1,64 @@
+diff -ruN ParallelIO-pio2_6_9/CMakeLists.txt ParallelIO-pio2_6_9-patch/CMakeLists.txt
+--- ParallelIO-pio2_6_9/CMakeLists.txt	2026-01-30 21:29:15.000000000 +0100
++++ ParallelIO-pio2_6_9-patch/CMakeLists.txt	2026-01-31 18:06:17.589338299 +0100
+@@ -173,17 +173,12 @@
+       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+       OUTPUT_QUIET
+       ERROR_QUIET)
+-    find_path (USER_CMAKE_MODULE_PATH
+-      NAMES mpiexec.cmake
+-      HINTS ${CMAKE_BINARY_DIR}/CMake_Fortran_utils)
+-    if (USER_CMAKE_MODULE_PATH)
+-      message (STATUS "Importing CMake_Fortran_utils - success")
+-    else ()
+-      message (FATAL_ERROR "Failed to import CMake_Fortran_utils")
+-    endif ()
++    set (USER_CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}/CMake_Fortran_utils"
++      CACHE STRING "Location of the CMake_Fortran_utils")
++  else ()
++    set (USER_CMAKE_MODULE_PATH ${USER_CMAKE_MODULE_PATH}
++      CACHE STRING "Location of the CMake_Fortran_utils")
+   endif ()
+-  set (USER_CMAKE_MODULE_PATH ${USER_CMAKE_MODULE_PATH}
+-  CACHE STRING "Location of the CMake_Fortran_utils")
+   list (APPEND CMAKE_MODULE_PATH ${USER_CMAKE_MODULE_PATH})
+ endif ()
+ 
+diff -ruN ParallelIO-pio2_6_9/src/clib/CMakeLists.txt ParallelIO-pio2_6_9-patch/src/clib/CMakeLists.txt
+--- ParallelIO-pio2_6_9/src/clib/CMakeLists.txt	2026-01-30 21:29:15.000000000 +0100
++++ ParallelIO-pio2_6_9-patch/src/clib/CMakeLists.txt	2026-01-31 18:07:10.798947223 +0100
+@@ -185,6 +185,9 @@
+     set(WITH_PNETCDF FALSE)
+     set(MPI_C_INCLUDE_PATH ${MPISERIAL_C_INCLUDE_DIRS})
+   endif()
++else ()
++  target_link_libraries (pioc
++    PUBLIC MPI::MPI_C)
+ endif()
+ 
+ 
+diff -ruN ParallelIO-pio2_6_9/src/flib/CMakeLists.txt ParallelIO-pio2_6_9-patch/src/flib/CMakeLists.txt
+--- ParallelIO-pio2_6_9/src/flib/CMakeLists.txt	2026-01-30 21:29:15.000000000 +0100
++++ ParallelIO-pio2_6_9-patch/src/flib/CMakeLists.txt	2026-01-31 18:08:06.581499819 +0100
+@@ -186,6 +186,9 @@
+     set(WITH_PNETCDF FALSE)
+     set(MPI_Fortran_INCLUDE_PATH ${MPISERIAL_Fortran_INCLUDE_DIRS})
+   endif()
++else ()
++    target_link_libraries (piof
++      PUBLIC MPI::MPI_Fortran)
+ endif()
+ 
+ # Check MPI I/O capabilities
+diff -ruN ParallelIO-pio2_6_9/src/gptl/CMakeLists.txt ParallelIO-pio2_6_9-patch/src/gptl/CMakeLists.txt
+--- ParallelIO-pio2_6_9/src/gptl/CMakeLists.txt	2026-01-30 21:29:15.000000000 +0100
++++ ParallelIO-pio2_6_9-patch/src/gptl/CMakeLists.txt	2026-01-31 18:09:24.703926961 +0100
+@@ -137,6 +137,8 @@
+   if(MPI_C_FOUND AND MPI_Fortran_FOUND)
+     target_compile_definitions(gptl
+       PUBLIC HAVE_MPI)
++    target_link_libraries (gptl
++      PUBLIC MPI::MPI_C MPI::MPI_Fortran)
+   endif()
+ endif()
+ 

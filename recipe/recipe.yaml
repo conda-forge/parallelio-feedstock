@@ -1,0 +1,82 @@
+schema_version: 1
+
+context:
+  name: parallelio
+  version: "2.6.9"
+  ver_underscores: ${{ version | replace(".", "_") }}
+  build: 0
+  # recipe-lint fails if mpi is undefined
+  mpi: ${{ mpi or "mpich" }}
+  # prioritize mpich via build number
+  build_number: ${{ build + 100 if mpi == "mpich" else build }}
+  mpi_prefix: ${{ "mpi_" + mpi }}
+  # we want to use the "nompi" versions of dependencies
+  mpi_dep_prefix: ${{ "nompi" if mpi == "mpi_serial" else mpi_prefix }}
+
+package:
+  name: ${{ name }}
+  version: ${{ version }}
+
+source:
+  url: https://github.com/NCAR/ParallelIO/archive/refs/tags/pio${{ ver_underscores }}.tar.gz
+  sha256: 22f34258f0e8b9e8271383bc7c6c657f4bbee560d33f87e3c0db53e0da8c8f3b
+  patches:
+    - 0001-mpi-cmakelists.patch
+    - 0002-mpi-serial-detection.patch
+
+build:
+  number: ${{ build_number }}
+  skip:
+    - win
+  # add build string so packages can depend on mpi variants dependencies:
+  # `PKG_NAME * mpi_mpich_*` for mpich
+  # `PKG_NAME * mpi_*` for any mpi
+  string: ${{ mpi_prefix }}_h${{ hash }}_${{ build_number }}
+
+requirements:
+  build:
+    - ${{ compiler("c") }}
+    - ${{ compiler("fortran") }}
+    - ${{ stdlib("c") }}
+    - cmake
+    - make
+    - pkg-config
+    - if: mpi == "openmpi" and build_platform != target_platform
+      then:
+        - ${{ mpi }}
+  host:
+    - ${{ mpi }}
+    # these need to be listed twice so conda-smithy build picks up the pins
+    - libnetcdf
+    - libnetcdf * ${{ mpi_dep_prefix }}_*
+    - if: mpi != "mpi_serial"
+      then:
+        - libpnetcdf
+        - libpnetcdf * ${{ mpi_dep_prefix }}_*
+    - netcdf-fortran
+    - netcdf-fortran * ${{ mpi_dep_prefix }}_*
+  run_exports:
+    - ${{ pin_subpackage("parallelio", upper_bound="x.x.x") }}
+    - parallelio *  ${{ mpi_prefix }}_*
+  ignore_run_exports:
+    from_package:
+      - netcdf-fortran
+tests:
+  - script:
+      - test -f ${PREFIX}/lib/libpioc${SHLIB_EXT}
+      - test -f ${PREFIX}/lib/libpiof${SHLIB_EXT}
+      - test -f ${PREFIX}/include/pio.h
+
+about:
+  homepage: https://github.com/NCAR/ParallelIO
+  license: Apache-2.0
+  license_file: LICENSE
+  summary: A high-level Parallel I/O Library for structured grid applications
+  repository: https://github.com/NCAR/ParallelIO
+  documentation: https://ncar.github.io/ParallelIO/
+
+extra:
+  recipe-maintainers:
+    - zklaus
+    - xylar
+    - jedwards4b
