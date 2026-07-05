@@ -14,6 +14,10 @@ if [[ ! -z "$mpi" && "$mpi" == "mpi_serial" ]]; then
 else
     export USE_MPI_SERIAL="OFF"
     export WITH_PNETCDF="ON"
+    # `pnetcdf-config --libs` reports only *extra* deps (empty on conda-forge), so
+    # the upstream CMake never puts `-lpnetcdf` on the link line. macOS's strict
+    # linker then fails with undefined `ncmpi_*` symbols. Force the link here.
+    export LDFLAGS="${LDFLAGS} -lpnetcdf"
 fi
 
 # for cross compiling using openmpi
