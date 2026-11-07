@@ -4,11 +4,11 @@ context:
   name: parallelio
   version: "2.6.9"
   ver_underscores: ${{ version | replace(".", "_") }}
-  build: 4
+  build: 5
   # recipe-lint fails if mpi is undefined
   mpi: ${{ mpi or "mpich" }}
   # prioritize mpich via build number
-  build_number: ${{ build + 100 if mpi == "mpich" else build }}
+  build_number: 5
   mpi_prefix: ${{ "mpi_" + mpi }}
   # we want to use the "nompi" versions of dependencies
   mpi_dep_prefix: ${{ "nompi" if mpi == "mpi_serial" else mpi_prefix }}
