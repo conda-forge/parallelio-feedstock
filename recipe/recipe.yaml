@@ -4,11 +4,9 @@ context:
   name: parallelio
   version: "2.6.9"
   ver_underscores: ${{ version | replace(".", "_") }}
-  build: 5
+  build_number: 5
   # recipe-lint fails if mpi is undefined
   mpi: ${{ mpi or "mpich" }}
-  # prioritize mpich via build number
-  build_number: 5
   mpi_prefix: ${{ "mpi_" + mpi }}
   # we want to use the "nompi" versions of dependencies
   mpi_dep_prefix: ${{ "nompi" if mpi == "mpi_serial" else mpi_prefix }}
@@ -25,13 +23,16 @@ source:
     - 0002-mpi-serial-detection.patch
 
 build:
-  number: ${{ build_number }}
+  number: ${{ build_number | int + 100 if mpi == "nompi" else build_number }}
   skip:
     - win
   # add build string so packages can depend on mpi variants dependencies:
   # `PKG_NAME * mpi_mpich_*` for mpich
   # `PKG_NAME * mpi_*` for any mpi
   string: ${{ mpi_prefix }}_h${{ hash }}_${{ build_number }}
+  variant:
+    # prefer 'nompi' over other mpi variants
+    down_prioritize_variant: ${{ 0 if mpi == "nompi" else 1 }}
 
 requirements:
   build:
@@ -40,7 +41,7 @@ requirements:
     - ${{ stdlib("c") }}
     - cmake
     - make
-    - pkg-config
+    - pkgconf
     - if: mpi == "openmpi" and build_platform != target_platform
       then:
         - ${{ mpi }}
